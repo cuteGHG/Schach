@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10131c">
+<meta name="description" content="Chessverse Studio – spiele Schach in 3D, gestalte deine Figuren, erschaffe eigene Regeln und fordere Freunde online heraus.">
+<title>Chessverse Studio — Dein Brett. Deine Regeln.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#10131c;--panel:#181d29;--panel2:#1d2432;--line:#2a3242;--muted:#8994a8;--text:#f2f4f8;--mint:#a7f3d0;--mint2:#65d6b0;--gold:#e7c58d;--red:#fa8b91;--shadow:0 24px 70px #05070c66}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 60% -10%,#29394a66,transparent 43%),var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+.app{min-height:100vh;display:grid;grid-template-columns:238px minmax(0,1fr)}.sidebar{border-right:1px solid var(--line);padding:25px 17px 18px;display:flex;flex-direction:column;gap:28px;background:#11151eaa;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:11px;padding:0 8px}.brand-mark{height:38px;width:38px;border-radius:13px;background:linear-gradient(145deg,#b6f5d9,#67c9aa);display:grid;place-items:center;color:#14231f;font-size:21px;font-weight:800;box-shadow:0 8px 25px #79dabb33}.brand-name{font-size:15px;font-weight:800;letter-spacing:.02em}.brand-sub{font:10px "DM Mono",monospace;color:var(--muted);letter-spacing:.18em;margin-top:3px}.nav-label{font:10px "DM Mono",monospace;color:#69758a;letter-spacing:.15em;padding:0 11px;margin:5px 0 9px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#9da7b9;padding:12px 12px;border-radius:12px;text-align:left;display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;transition:.18s}.nav button:hover,.nav button.active{background:#222c39;color:#e8fff5}.nav button.active{box-shadow:inset 2px 0 var(--mint)}.nav-icon{font-size:17px;width:19px;text-align:center}.sidebar-bottom{margin-top:auto}.profile{border:1px solid var(--line);background:#171d29;border-radius:15px;padding:12px;display:flex;gap:10px;align-items:center}.avatar{height:32px;width:32px;border-radius:50%;background:linear-gradient(135deg,#d9c19b,#9d8cbb);display:grid;place-items:center;color:#20202a;font-weight:800}.profile-name{font-size:11px;font-weight:800}.profile-note{font:9px "DM Mono",monospace;color:var(--muted);margin-top:3px}
+main{padding:27px clamp(18px,3vw,44px) 40px;max-width:1600px;width:100%;margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}.eyebrow{font:10px "DM Mono",monospace;letter-spacing:.19em;color:var(--mint2);text-transform:uppercase}.headline{font-size:clamp(25px,3vw,39px);line-height:1.12;letter-spacing:-.055em;margin:8px 0 0;font-weight:800}.headline span{color:var(--mint)}.subhead{font-size:12px;color:var(--muted);margin:9px 0 0}.top-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#202735;color:#e8edf5;border-radius:11px;padding:10px 14px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:transform .15s,border-color .15s,background .15s}.btn:hover{transform:translateY(-1px);border-color:#56657a;background:#293344}.btn.primary{background:var(--mint);border-color:var(--mint);color:#13241e}.btn.primary:hover{background:#c2ffe3}.btn.ghost{background:transparent}.btn.danger{color:#ffb4b8;border-color:#633d48;background:#39232d}.btn.small{padding:8px 10px;font-size:10px}.icon-btn{height:35px;width:35px;border:1px solid var(--line);border-radius:10px;background:#1c2330;color:#bcc7d8}
+.workspace{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(280px,.78fr);gap:19px;align-items:start}.board-card,.panel-card,.feature-card{background:linear-gradient(145deg,#1b2230,#171c27);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow)}.board-card{overflow:hidden;position:relative}.board-top{padding:16px 18px 13px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #293141}.board-title{font-size:12px;font-weight:800;display:flex;align-items:center;gap:9px}.live-dot{height:7px;width:7px;border-radius:50%;background:#75e0b5;box-shadow:0 0 12px #75e0b5}.board-meta{font:9px "DM Mono",monospace;color:var(--muted);letter-spacing:.12em}.board-stage{height:min(62vw,620px);min-height:390px;max-height:660px;position:relative;background:radial-gradient(ellipse at 52% 47%,#293749 0,#18212e 55%,#151b26 100%);overflow:hidden}#board3d{position:absolute;inset:0}#board3d canvas{display:block;width:100%;height:100%}.board-hint{position:absolute;bottom:13px;left:16px;padding:8px 11px;border:1px solid #ffffff1b;background:#101722a8;backdrop-filter:blur(10px);border-radius:9px;color:#aeb9c9;font:9px "DM Mono",monospace;pointer-events:none}.board-view{position:absolute;right:14px;top:13px;display:flex;gap:6px}.board-view button{border:1px solid #ffffff20;background:#141c28c9;color:#bac5d4;border-radius:8px;padding:7px 9px;font-size:10px}.board-view button.active{color:var(--mint);border-color:#87d9b855}.board-bottom{display:flex;justify-content:space-between;align-items:center;padding:13px 17px;border-top:1px solid #293141;gap:10px}.player-chip{display:flex;align-items:center;gap:9px}.player-piece{width:29px;height:29px;border-radius:9px;background:#e6e2d7;color:#333b45;display:grid;place-items:center;font-size:18px}.player-piece.black{background:#303a49;color:#f1eee7}.player-name{font-size:10px;font-weight:800}.player-caption{font:9px "DM Mono",monospace;color:var(--muted);margin-top:3px}.vs{font:9px "DM Mono",monospace;color:#758198;letter-spacing:.2em}
+.right-rail{display:grid;gap:14px}.panel-card{padding:17px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.panel-title{font-size:12px;font-weight:800}.panel-kicker{font:9px "DM Mono",monospace;color:var(--muted);letter-spacing:.13em}.turn-box{background:linear-gradient(130deg,#223a39,#202e35);border:1px solid #426b5d66;border-radius:14px;padding:14px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:center}.turn-label{font-size:13px;font-weight:800}.turn-sub{font:9px "DM Mono",monospace;color:#a2c5b8;margin-top:4px}.turn-emblem{font-size:29px;filter:drop-shadow(0 4px 12px #0008)}.status-line{display:flex;align-items:center;gap:7px;color:#aeb8c8;font-size:10px;margin:0 0 15px}.status-line .status-light{width:6px;height:6px;border-radius:50%;background:var(--mint2)}.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.action-grid .btn{padding:10px 8px}.move-list{max-height:185px;overflow:auto;display:grid;gap:2px;padding-right:4px}.move-row{display:grid;grid-template-columns:28px 1fr 1fr;align-items:center;padding:7px 8px;border-radius:7px;font:10px "DM Mono",monospace;color:#c2cad5}.move-row:nth-child(odd){background:#222a38}.move-number{color:#718096}.empty-moves{font-size:10px;color:var(--muted);padding:12px 5px}.section-sep{height:1px;background:var(--line);margin:14px 0}.tool-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0}.tool-label{font-size:10px;font-weight:700}.tool-note{font:9px "DM Mono",monospace;color:var(--muted);margin-top:3px}.switch{position:relative;width:38px;height:21px;display:inline-block;flex:none}.switch input{opacity:0;width:0;height:0}.switch span{position:absolute;inset:0;background:#465064;border-radius:30px;transition:.2s}.switch span:before{content:"";height:15px;width:15px;position:absolute;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+span{background:#5fc6a2}.switch input:checked+span:before{transform:translateX(17px);background:#13241e}
+.lower-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:17px}.feature-card{padding:15px;display:flex;gap:12px;align-items:flex-start;min-height:92px}.feature-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#293b3b;color:var(--mint);font-size:17px;flex:none}.feature-card strong{font-size:11px;display:block;margin:2px 0 5px}.feature-card p{font-size:9px;line-height:1.6;color:var(--muted);margin:0}
+.modal-backdrop{position:fixed;inset:0;z-index:20;background:#05070bd9;backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:18px}.modal-backdrop.open{display:flex}.modal{width:min(620px,100%);max-height:90vh;overflow:auto;border:1px solid #3a465a;border-radius:20px;background:linear-gradient(145deg,#202938,#171d29);box-shadow:0 30px 100px #000b;padding:22px}.modal.wide{width:min(760px,100%)}.modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:19px}.modal h2{margin:0;font-size:22px;letter-spacing:-.04em}.modal-intro{font-size:10px;line-height:1.65;color:var(--muted);margin:7px 0 0}.close-btn{width:31px;height:31px;border-radius:9px;border:1px solid var(--line);background:#252e3d;color:#cad2de}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px;margin-bottom:13px}.field label{font-size:10px;font-weight:800;color:#c8d0dc}.field input,.field select{width:100%;border:1px solid #3b4658;border-radius:10px;background:#131a25;color:#eef1f6;padding:11px 12px;font-size:11px}.field small{font-size:9px;color:var(--muted);line-height:1.5}.upload-zone{border:1px dashed #5b7184;border-radius:14px;padding:20px;text-align:center;background:#182633;margin:8px 0 14px;cursor:pointer}.upload-zone:hover{border-color:var(--mint2)}.upload-zone .upload-icon{font-size:27px}.upload-zone strong{display:block;font-size:11px;margin:7px 0}.upload-zone span{font-size:9px;color:var(--muted)}.upload-zone input{display:none}.upload-preview{display:none;max-height:125px;max-width:100%;object-fit:contain;margin:12px auto 0;border-radius:7px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}.note-box{padding:11px 12px;border:1px solid #66553b;background:#322b22;border-radius:10px;color:#e6ca9b;font-size:9px;line-height:1.6;margin:12px 0}.collection{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.piece-tag{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#1a2230;padding:7px 9px;border-radius:9px;font-size:9px}.piece-tag button{border:0;background:transparent;color:#e99a9e;font-size:13px}.room-code{font:12px "DM Mono",monospace;letter-spacing:.08em;background:#101722;border:1px dashed #65798b;padding:13px;border-radius:10px;word-break:break-all;color:var(--mint);margin:10px 0}.room-status{font-size:10px;color:#aab5c4;padding:9px 0}.room-status strong{color:var(--mint)}.toast{position:fixed;z-index:50;left:50%;bottom:23px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e1f9ee;color:#14251f;padding:11px 17px;border-radius:10px;font-size:11px;font-weight:800;box-shadow:0 12px 35px #0007;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}.badge{font:9px "DM Mono",monospace;letter-spacing:.08em;padding:5px 8px;border:1px solid #48675e;border-radius:99px;color:#9ce6c8;background:#20352f}.badge.chaos{border-color:#846743;background:#3c3022;color:#edc98c}.hidden{display:none!important}footer{margin-top:22px;color:#657185;font:9px "DM Mono",monospace;display:flex;justify-content:space-between;gap:10px}
+@media(max-width:1080px){.app{grid-template-columns:76px minmax(0,1fr)}.sidebar{padding:23px 10px}.brand{justify-content:center;padding:0}.brand-copy,.nav-label,.nav-text,.profile-copy{display:none}.nav button{justify-content:center;padding:13px 6px}.profile{justify-content:center;padding:9px 4px}.workspace{grid-template-columns:minmax(0,1.25fr) minmax(260px,.8fr)}}
+@media(max-width:760px){.app{display:block}.sidebar{position:fixed;z-index:8;bottom:0;top:auto;left:0;right:0;height:65px;width:auto;border-right:0;border-top:1px solid var(--line);padding:5px 10px;background:#111823f5;display:block}.brand,.sidebar-bottom,.nav-label{display:none}.nav{display:flex;justify-content:space-around;gap:2px}.nav button{flex:1;flex-direction:column;gap:2px;padding:5px 2px;font-size:8px}.nav-text{display:block!important}.nav-icon{font-size:16px}.app{padding-bottom:65px}main{padding:20px 13px 30px}.topbar{align-items:flex-start}.top-actions{justify-content:flex-end}.top-actions .btn{font-size:9px;padding:8px 9px}.headline{font-size:27px}.workspace{grid-template-columns:1fr}.board-stage{height: min(100vw,560px);min-height:310px}.right-rail{grid-template-columns:1fr 1fr;align-items:start}.right-rail .panel-card:first-child{grid-row:span 2}.lower-grid{grid-template-columns:1fr}.feature-card{min-height:auto}footer{padding-bottom:6px}.board-bottom{padding:11px 12px}.board-hint{font-size:8px}.board-view button{font-size:9px;padding:6px 7px}}
+@media(max-width:440px){.topbar{display:block}.top-actions{margin-top:14px;justify-content:flex-start}.right-rail{grid-template-columns:1fr}.right-rail .panel-card:first-child{grid-row:auto}.board-stage{min-height:290px}.form-grid{grid-template-columns:1fr}.modal{padding:17px}.turn-box{padding:12px}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
+</script>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">♞</div><div class="brand-copy"><div class="brand-name">CHESSVERSE</div><div class="brand-sub">STUDIO / 001</div></div></div>
+  <div><div class="nav-label">SPIELPLATZ</div><nav class="nav">
+    <button class="active" data-action="home"><span class="nav-icon">▦</span><span class="nav-text">Spieltisch</span></button>
+    <button data-action="customize"><span class="nav-icon">✳</span><span class="nav-text">Figuren-Werkstatt</span></button>
+    <button data-action="multiplayer"><span class="nav-icon">◎</span><span class="nav-text">Multiplayer</span></button>
+    <button data-action="freestyle"><span class="nav-icon">♜</span><span class="nav-text">Freies Brett</span></button>
+  </nav></div>
+  <div class="sidebar-bottom"><div class="profile"><div class="avatar">C</div><div class="profile-copy"><div class="profile-name">Chess Creator</div><div class="profile-note">DEIN PRIVATES STUDIO</div></div></div></div>
+</aside>
+<main>
+  <header class="topbar">
+    <div><div class="eyebrow">THE CREATIVE CHESS PLATFORM</div><h1 class="headline">Dein Spiel. <span>Deine Regeln.</span></h1><p class="subhead">Klassisches Schach trifft auf deine eigene 3D-Welt.</p></div>
+    <div class="top-actions"><button class="btn ghost" id="customize-top">✳ Figuren gestalten</button><button class="btn primary" id="multiplayer-top">◎ Online spielen</button></div>
+  </header>
+  <div class="workspace">
+    <section class="board-card">
+      <div class="board-top"><div class="board-title"><span class="live-dot"></span> DEIN SPIELTISCH <span class="badge hidden" id="chaos-badge">CHAOS-MODUS</span></div><div class="board-meta" id="game-meta">STANDARD · 3D VIEW</div></div>
+      <div class="board-stage" id="board-stage">
+        <div id="board3d"></div>
+        <div class="board-view"><button class="active" id="view-3d">3D</button><button id="view-reset">⟳ Ansicht</button></div>
+        <div class="board-hint">ZIEHEN ZUM DREHEN · KLICKEN ZUM ZIEHEN DER FIGUREN</div>
+      </div>
+      <div class="board-bottom">
+        <div class="player-chip"><div class="player-piece black">♚</div><div><div class="player-name" id="black-name">Schwarz</div><div class="player-caption" id="black-caption">AM ZUG, WENN ANGEZEIGT</div></div></div>
+        <div class="vs">VS</div>
+        <div class="player-chip"><div class="player-piece">♔</div><div><div class="player-name" id="white-name">Weiß · Du</div><div class="player-caption" id="white-caption">LOKALES SPIEL</div></div></div>
+      </div>
+    </section>
+    <aside class="right-rail">
+      <section class="panel-card">
+        <div class="panel-head"><div class="panel-title">Spielkontrolle</div><div class="panel-kicker">MATCH / 01</div></div>
+        <div class="turn-box"><div><div class="turn-label" id="turn-label">Weiß ist am Zug</div><div class="turn-sub" id="turn-sub">Wähle eine Figur auf dem Brett</div></div><div class="turn-emblem" id="turn-emblem">♙</div></div>
+        <p class="status-line"><span class="status-light" id="status-light"></span><span id="game-status">Bereit für deinen ersten Zug.</span></p>
+        <div class="action-grid"><button class="btn primary" id="new-game">＋ Neues Spiel</button><button class="btn" id="undo">↶ Zug zurück</button><button class="btn" id="flip-board">⇅ Brett drehen</button><button class="btn" id="copy-fen">⌘ FEN kopieren</button></div>
+        <div class="section-sep"></div>
+        <div class="panel-head"><div class="panel-title">Zugverlauf</div><div class="panel-kicker" id="move-count">0 ZÜGE</div></div>
+        <div class="move-list" id="move-list"><div class="empty-moves">Noch keine Züge. Das erste Kapitel wartet.</div></div>
+      </section>
+      <section class="panel-card">
+        <div class="panel-head"><div class="panel-title">Deine Spielwelt</div><div class="panel-kicker">CUSTOM MODE</div></div>
+        <div class="tool-row"><div><div class="tool-label">Chaos-Modus</div><div class="tool-note">Figuren frei ändern & platzieren</div></div><label class="switch"><input type="checkbox" id="sandbox-toggle"><span></span></label></div>
+        <div class="tool-row"><div><div class="tool-label">3D-Figuren</div><div class="tool-note">Drehbares räumliches Brett</div></div><span class="badge">AKTIV</span></div>
+        <div class="section-sep"></div>
+        <button class="btn" id="add-piece" style="width:100%">＋ Eigene Figur platzieren</button>
+        <button class="btn ghost" id="open-studio" style="width:100%;margin-top:7px">✳ Figuren-Werkstatt öffnen</button>
+      </section>
+    </aside>
+  </div>
+  <div class="lower-grid">
+    <div class="feature-card"><div class="feature-icon">◈</div><div><strong>Deine Figuren. Dein Stil.</strong><p>Lade ein 2D-Bild hoch und verwandle es automatisch in ein extrudiertes 3D-Relief für deine Figuren.</p></div></div>
+    <div class="feature-card"><div class="feature-icon">⌘</div><div><strong>Zusammen spielen</strong><p>Erstelle einen privaten Raum und spiele direkt mit Freunden über eine Peer-to-Peer-Verbindung.</p></div></div>
+    <div class="feature-card"><div class="feature-icon">♜</div><div><strong>Deine Regeln</strong><p>Vom normalen Schach bis zum kreativen Chaos-Modus – klar sichtbar für alle Mitspielenden.</p></div></div>
+  </div>
+  <footer><span>CHESSVERSE STUDIO · MADE FOR YOUR MOVES</span><span>BUILD 1.0.0 · BROWSER EDITION</span></footer>
+</main>
+</div>
+
+<div class="modal-backdrop" id="studio-modal">
+ <div class="modal wide">
+  <div class="modal-header"><div><div class="eyebrow">THE FIGURE LAB</div><h2>Deine Figur. Neu gedacht.</h2><p class="modal-intro">Lade ein 2D-Bild hoch. Chessverse erkennt die Silhouette, erzeugt daraus eine extrudierte 3D-Form und legt dein Bild als Textur darüber.</p></div><button class="close-btn" data-close="studio-modal">✕</button></div>
+  <div class="form-grid">
+   <div>
+    <div class="field"><label for="piece-type">Welche Schachfigur soll ersetzt werden?</label><select id="piece-type"><option value="P">Bauer</option><option value="N">Springer</option><option value="B">Läufer</option><option value="R">Turm</option><option value="Q">Dame</option><option value="K">König</option></select></div>
+    <div class="field"><label for="piece-side">Für welche Seite?</label><select id="piece-side"><option value="w">Weiß</option><option value="b">Schwarz</option></select></div>
+    <div class="field"><label for="piece-name">Name deiner Figur</label><input id="piece-name" maxlength="28" placeholder="z. B. Robo-König"></div>
+    <div class="field"><label for="piece-file">Dein 2D-Bild</label>
+      <label class="upload-zone" for="piece-file"><div class="upload-icon">▧</div><strong>Bild hier auswählen</strong><span>PNG mit transparentem Hintergrund liefert die beste Silhouette · JPG ebenfalls möglich</span><img id="upload-preview" class="upload-preview" alt="Bildvorschau"></label><input id="piece-file" type="file" accept="image/png,image/jpeg,image/webp">
+    </div>
+   </div>
+   <div>
+    <div class="note-box">AUTOMATISCHE 2D → 3D-UMWANDLUNG<br>Dein Bild wird als Silhouette extrudiert und bekommt echte Tiefe, Kanten und eine Bildtextur. Ein transparenter Hintergrund funktioniert am besten. Es ist keine KI-Fotogrammetrie.</div>
+    <div style="border:1px solid var(--line);background:#111924;border-radius:14px;padding:17px;min-height:178px;display:grid;place-items:center;text-align:center">
+     <div><div style="font-size:47px;color:var(--gold)">♞</div><div style="font-size:11px;font-weight:800;margin-top:8px">3D-Relief wird erstellt</div><div style="font-size:9px;color:var(--muted);line-height:1.6;margin-top:5px">Nach dem Erstellen erscheint deine Figur direkt auf dem Brett.</div></div>
+    </div>
+    <div class="field" style="margin-top:14px"><label>Deine erstellten Designs</label><div class="collection" id="custom-collection"><span style="font-size:9px;color:var(--muted)">Noch keine eigenen Figuren.</span></div></div>
+   </div>
+  </div>
+  <div class="modal-actions"><button class="btn" data-close="studio-modal">Schließen</button><button class="btn primary" id="create-piece">✦ 3D-Figur erstellen</button></div>
+ </div>
+</div>
+
+<div class="modal-backdrop" id="multi-modal">
+ <div class="modal">
+  <div class="modal-header"><div><div class="eyebrow">PLAY TOGETHER</div><h2>Dein privater Spielraum.</h2><p class="modal-intro">Erstelle einen Raum und teile die Raum-ID. Dein Freund kann damit direkt beitreten.</p></div><button class="close-btn" data-close="multi-modal">✕</button></div>
+  <div class="note-box">Peer-to-Peer-Multiplayer: Die Verbindung wird direkt zwischen den Browsern aufgebaut. Beide Spieler brauchen eine Internetverbindung. Raum-IDs sind nicht als Konten oder dauerhafte Einladungslinks gedacht.</div>
+  <button class="btn primary" id="create-room" style="width:100%">＋ Neuen Raum erstellen</button>
+  <div id="room-created" class="hidden"><div class="room-status" id="room-status">Raum wird vorbereitet …</div><div class="room-code" id="room-code"></div><button class="btn" id="copy-room" style="width:100%">⌘ Raum-ID kopieren</button></div>
+  <div class="section-sep"></div>
+  <div class="field"><label for="join-code">Raum-ID deines Freundes</label><input id="join-code" placeholder="Peer-ID hier einfügen" autocomplete="off"></div>
+  <button class="btn" id="join-room" style="width:100%">◎ Raum beitreten</button>
+  <div class="room-status" id="connection-status">Noch nicht verbunden.</div>
+  <div class="modal-actions"><button class="btn" data-close="multi-modal">Fertig</button></div>
+ </div>
+</div>
+
+<div class="modal-backdrop" id="freestyle-modal">
+ <div class="modal">
+  <div class="modal-header"><div><div class="eyebrow">YOUR RULES</div><h2>Freies Brett.</h2><p class="modal-intro">Platziere zusätzliche Figuren, ändere ihre Art oder baue deine eigene Stellung. Im Multiplayer ist der Chaos-Modus für beide sichtbar.</p></div><button class="close-btn" data-close="freestyle-modal">✕</button></div>
+  <div class="tool-row"><div><div class="tool-label">Chaos-Modus aktivieren</div><div class="tool-note">Normale Schachregeln werden ausgeschaltet</div></div><label class="switch"><input type="checkbox" id="sandbox-modal-toggle"><span></span></label></div>
+  <div class="section-sep"></div>
+  <div class="form-grid">
+   <div class="field"><label for="add-type">Figurentyp</label><select id="add-type"><option value="P">Bauer</option><option value="N">Springer</option><option value="B">Läufer</option><option value="R">Turm</option><option value="Q">Dame</option><option value="K">König</option></select></div>
+   <div class="field"><label for="add-color">Farbe</label><select id="add-color"><option value="w">Weiß</option><option value="b">Schwarz</option></select></div>
+   <div class="field"><label for="add-square">Zielfeld</label><select id="add-square"></select></div>
+   <div class="field"><label>Aktion</label><button class="btn primary" id="confirm-add">＋ Figur hinzufügen</button></div>
+  </div>
+  <div class="note-box">Hinweis: Im Chaos-Modus kannst du Figuren durch Ziehen auf ein anderes Feld bewegen oder eine dort stehende Figur ersetzen. Das Ergebnis ist kein reguläres Schachspiel mehr.</div>
+  <div class="modal-actions"><button class="btn" data-close="freestyle-modal">Schließen</button></div>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
+import { Chess } from "https://esm.sh/chess.js@1.4.0";
+import Peer from "https://esm.sh/peerjs@1.5.5";
+
+const $ = id => document.getElementById(id);
+const chess = new Chess();
+let renderer, scene, camera, controls, raycaster, pointer;
+let boardSquares = [], piecesGroup, selectedSquare = null, legalTargets = [];
+let sandbox = false, flipped = false, extras = [], customDefinitions = {}, customAssets = {};
+let history = [], peer = null, connection = null, myColor = "w", isHost = false;
+let selectedUploadData = null, toastTimer = null;
+const pieceNames = {p:"Bauer",n:"Springer",b:"Läufer",r:"Turm",q:"Dame",k:"König"};
+const unicode = {wp:"♙",wn:"♘",wb:"♗",wr:"♖",wq:"♕",wk:"♔",bp:"♟",bn:"♞",bb:"♝",br:"♜",bq:"♛",bk:"♚"};
+const colorMaterials = {
+ w: new THREE.MeshStandardMaterial({color:0xece8de,roughness:.3,metalness:.22}),
+ b: new THREE.MeshStandardMaterial({color:0x333e4d,roughness:.29,metalness:.42}),
+ accent: new THREE.MeshStandardMaterial({color:0xc6a56e,metalness:.72,roughness:.25}),
+ darkAccent: new THREE.MeshStandardMaterial({color:0x687b8a,metalness:.65,roughness:.27})
+};
+function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2400)}
+function openModal(id){$(id).classList.add("open")}
+function closeModal(id){$(id).classList.remove("open")}
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(b.dataset.close)));
+document.querySelectorAll(".modal-backdrop").forEach(b=>b.addEventListener("click",e=>{if(e.target===b)b.classList.remove("open")}));
+function pieceGroup(type,color){
+ const group=new THREE.Group(), mat=color==="w"?colorMaterials.w:colorMaterials.b, accent=color==="w"?colorMaterials.accent:colorMaterials.darkAccent;
+ const profile=[[0,.035],[.27,.035],[.32,.075],[.31,.115],[.23,.15],[.2,.19],[.22,.23],[.16,.27],[.14,.32],[.17,.36]];
+ const base=new THREE.Mesh(new THREE.LatheGeometry(profile.map(p=>new THREE.Vector2(p[0],p[1])),48),mat);base.castShadow=true;base.receiveShadow=true;group.add(base);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(.24,.018,8,48),accent);ring.rotation.x=Math.PI/2;ring.position.y=.16;group.add(ring);
+ let bodyPoints;
+ if(type==="p") bodyPoints=[[0,.34],[.12,.38],[.18,.48],[.17,.57],[.12,.66],[.19,.69],[.17,.73],[0,.73]];
+ else if(type==="r") bodyPoints=[[0,.34],[.19,.38],[.2,.58],[.27,.6],[.27,.74],[.2,.74],[.2,.68],[.1,.68],[.1,.74],[0,.74]];
+ else if(type==="b") bodyPoints=[[0,.34],[.16,.4],[.19,.54],[.14,.65],[.1,.78],[0,.91]];
+ else if(type==="q") bodyPoints=[[0,.34],[.19,.4],[.22,.56],[.14,.66],[.2,.71],[.18,.76],[.1,.8],[0,.89]];
+ else if(type==="k") bodyPoints=[[0,.34],[.2,.4],[.22,.58],[.13,.68],[.1,.79],[.06,.81],[.06,.95],[.0,.95]];
+ else bodyPoints=[[0,.34],[.18,.4],[.2,.57],[.15,.67],[.1,.74],[0,.78]];
+ const body=new THREE.Mesh(new THREE.LatheGeometry(bodyPoints.map(p=>new THREE.Vector2(p[0],p[1])),48),mat);body.castShadow=true;body.receiveShadow=true;group.add(body);
+ if(type==="n"){
+  const s=new THREE.Shape();s.moveTo(-.13,.4);s.lineTo(.13,.4);s.lineTo(.12,.64);s.lineTo(.24,.77);s.lineTo(.18,.91);s.lineTo(.04,.86);s.lineTo(-.08,.75);s.lineTo(-.17,.7);s.closePath();
+  const head=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:.15,bevelEnabled:true,bevelThickness:.035,bevelSize:.025,bevelSegments:2}),mat);head.position.set(0,.05,-.075);head.castShadow=true;group.add(head);
+  const eye=new THREE.Mesh(new THREE.SphereGeometry(.025,12,10),accent);eye.position.set(.105,.82,.09);group.add(eye);
+ }
+ if(type==="b"){
+  const cut=new THREE.Mesh(new THREE.BoxGeometry(.045,.18,.035),accent);cut.position.set(0,.72,.135);cut.rotation.z=-.42;group.add(cut);
+ }
+ if(type==="q"){
+  const crown=new THREE.Mesh(new THREE.TorusGeometry(.145,.025,9,32),accent);crown.position.y=.78;group.add(crown);
+  for(let i=0;i<5;i++){const a=i*Math.PI*2/5;const gem=new THREE.Mesh(new THREE.SphereGeometry(.038,12,10),accent);gem.position.set(Math.cos(a)*.15,.83,Math.sin(a)*.15);group.add(gem)}
+ }
+ if(type==="k"){
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(.055,.24,.055),accent);bar.position.set(0,.98,0);group.add(bar);
+  const cross=new THREE.Mesh(new THREE.BoxGeometry(.2,.055,.055),accent);cross.position.set(0,1.0,0);group.add(cross);
+ }
+ if(type==="r"){for(let i=0;i<4;i++){const block=new THREE.Mesh(new THREE.BoxGeometry(.08,.1,.09),mat);const a=i*Math.PI/2;block.position.set(Math.cos(a)*.17,.79,Math.sin(a)*.17);group.add(block)}}
+ if(type==="p"){const orb=new THREE.Mesh(new THREE.SphereGeometry(.13,28,20),mat);orb.position.y=.79;orb.castShadow=true;group.add(orb)}
+ group.userData.baseY=.27;
+ return group;
+}
+function makeCustomGroup(key,color){
+ const asset=customAssets[key];
+ if(!asset)return null;
+ const group=new THREE.Group();
+ const mat=color==="w"?colorMaterials.w:colorMaterials.b, accent=color==="w"?colorMaterials.accent:colorMaterials.darkAccent;
+ const base=new THREE.Mesh(new THREE.CylinderGeometry(.29,.34,.13,40),mat);base.position.y=.07;base.castShadow=true;group.add(base);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(.27,.018,8,40),accent);ring.rotation.x=Math.PI/2;ring.position.y=.15;group.add(ring);
+ const solid=new THREE.Mesh(asset.geometry,asset.material);solid.position.y=.14;solid.castShadow=true;solid.receiveShadow=true;group.add(solid);
+ group.userData.baseY=.27;return group;
+}
+function addSquare(x,y,z,file,rank){
+ const light=(file+rank)%2===0;
+ const mat=new THREE.MeshStandardMaterial({color:light?0xc7c9bd:0x526a72,roughness:.62,metalness:.05});
+ const mesh=new THREE.Mesh(new THREE.BoxGeometry(.99,.1,.99),mat);
+ mesh.position.set(x,.19,z);mesh.receiveShadow=true;mesh.userData.square=String.fromCharCode(97+file)+(rank+1);
+ scene.add(mesh);boardSquares.push(mesh);
+}
+function init3D(){
+ const root=$("board3d");
+ try{
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x17202d);scene.fog=new THREE.Fog(0x17202d,16,28);
+  camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(7.7,9.7,9.5);
+  renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;root.appendChild(renderer.domElement);
+  controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,.05,0);controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=7;controls.maxDistance=19;controls.maxPolarAngle=Math.PI*.47;controls.minPolarAngle=.25;
+  scene.add(new THREE.HemisphereLight(0xcbdcff,0x34404c,2.0));
+  const key=new THREE.DirectionalLight(0xffe4c2,3.1);key.position.set(-4,10,7);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-8;key.shadow.camera.right=8;key.shadow.camera.top=8;key.shadow.camera.bottom=-8;scene.add(key);
+  const rim=new THREE.DirectionalLight(0x7bcfce,1.6);rim.position.set(6,6,-7);scene.add(rim);
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:0x17202d,roughness:.93}));floor.rotation.x=-Math.PI/2;floor.position.y=-.18;floor.receiveShadow=true;scene.add(floor);
+  const plinth=new THREE.Mesh(new THREE.BoxGeometry(8.35,.34,8.35),new THREE.MeshStandardMaterial({color:0x273341,metalness:.45,roughness:.32}));plinth.position.y=-.015;plinth.receiveShadow=true;plinth.castShadow=true;scene.add(plinth);
+  const rimBox=new THREE.Mesh(new THREE.BoxGeometry(8.46,.12,8.46),new THREE.MeshStandardMaterial({color:0x9d8157,metalness:.7,roughness:.32}));rimBox.position.y=.11;scene.add(rimBox);
+  for(let rank=0;rank<8;rank++)for(let file=0;file<8;file++)addSquare(file-3.5,.2,3.5-rank,file,rank);
+  piecesGroup=new THREE.Group();scene.add(piecesGroup);raycaster=new THREE.Raycaster();pointer=new THREE.Vector2();
+  resizeRenderer();window.addEventListener("resize",resizeRenderer);
+  renderer.domElement.addEventListener("pointerdown",onBoardPointer);
+  renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});
+  renderBoard();
+ }catch(error){console.error(error);$("board3d").innerHTML='<div style="padding:40px;text-align:center;color:#bec8d6;font-size:12px">3D konnte in diesem Browser nicht gestartet werden. Bitte aktiviere WebGL oder verwende einen aktuellen Browser.</div>'}
+}
+function resizeRenderer(){if(!renderer)return;const w=$("board3d").clientWidth,h=$("board3d").clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
+function squarePosition(square){const f=square.charCodeAt(0)-97,r=Number(square[1])-1;return {x:f-3.5,z:3.5-r}}
+function clearGroup(group){while(group.children.length){const o=group.children.pop();if(o.geometry&&o.geometry!==undefined)o.geometry.dispose?.()}}
+function renderBoard(){
+ if(!piecesGroup)return;
+ clearGroup(piecesGroup);
+ const board=chess.board();
+ board.forEach((row,rowIndex)=>row.forEach((piece,file)=>{
+  if(!piece)return;
+  const square=String.fromCharCode(97+file)+(8-rowIndex),key=piece.color+piece.type;
+  addPieceMesh(square,piece.type,piece.color,key);
+ }));
+ extras.forEach(p=>{if(!chess.get(p.square))addPieceMesh(p.square,p.type,p.color,p.color+p.type,p.id)});
+ if(selectedSquare)markSelected(selectedSquare);
+ legalTargets.forEach(s=>markLegal(s));
+ updateUI();
+}
+function addPieceMesh(square,type,color,key,id){
+ const pos=squarePosition(square);
+ let group=makeCustomGroup(key,color)||pieceGroup(type,color);
+ group.position.set(pos.x,.245,pos.z);group.userData.square=square;group.userData.extraId=id||null;group.userData.type=type;group.userData.color=color;
+ if(flipped){group.rotation.y=Math.PI}
+ piecesGroup.add(group);
+}
+function markSelected(square){
+ const p=squarePosition(square);const ring=new THREE.Mesh(new THREE.RingGeometry(.39,.47,48),new THREE.MeshBasicMaterial({color:0xa7f3d0,side:THREE.DoubleSide,transparent:true,opacity:.9}));ring.rotation.x=-Math.PI/2;ring.position.set(p.x,.258,p.z);piecesGroup.add(ring);
+}
+function markLegal(square){
+ const p=squarePosition(square);const occupied=chess.get(square)||extras.some(e=>e.square===square);
+ const mark=new THREE.Mesh(occupied?new THREE.RingGeometry(.39,.44,40):new THREE.CircleGeometry(.12,24),new THREE.MeshBasicMaterial({color:0x9af1ca,transparent:true,opacity:occupied?.76:.78,side:THREE.DoubleSide}));mark.rotation.x=-Math.PI/2;mark.position.set(p.x,.262,p.z);piecesGroup.add(mark);
+}
+function onBoardPointer(event){
+ if(!renderer||!renderer.domElement)return;
+ const rect=renderer.domElement.getBoundingClientRect();pointer.x=((event.clientX-rect.left)/rect.width)*2-1;pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);
+ const hits=raycaster.intersectObjects([...piecesGroup.children,...boardSquares],true);if(!hits.length)return;
+ let obj=hits[0].object;while(obj&&!obj.userData.square)obj=obj.parent;
+ if(obj&&obj.userData.square){handleSquare(obj.userData.square)}
+}
+function handleSquare(square){
+ if(connection&&!sandbox&&((myColor==="w"&&chess.turn()==="b")||(myColor==="b"&&chess.turn()==="w"))){toast("Warte auf deinen Zug.");return}
+ const piece=chess.get(square),extra=extras.find(e=>e.square===square);
+ if(!selectedSquare){
+  if(piece||extra){if(connection&&!sandbox&&(piece||extra)&&((piece||extra).color!==myColor)){toast("Das ist die Figur deines Gegners.");return}
+   selectedSquare=square;
+   legalTargets=sandbox?Array.from({length:64},(_,i)=>String.fromCharCode(97+i%8)+(Math.floor(i/8)+1)).filter(s=>s!==square):chess.moves({square:square,verbose:true}).map(m=>m.to);
+   renderBoard();
+  }
+  return;
+ }
+ if(square===selectedSquare){selectedSquare=null;legalTargets=[];renderBoard();return}
+ const target=chess.get(square),source=chess.get(selectedSquare),sourceExtra=extras.find(e=>e.square===selectedSquare);
+ if(sandbox){
+  pushHistory();
+  if(sourceExtra){
+   const occupied=extras.findIndex(e=>e.square===square);if(occupied>=0)extras.splice(occupied,1);
+   const onBoard=chess.get(square);if(onBoard)chess.remove(square);
+   sourceExtra.square=square;
+  }else if(source){
+   if(chess.get(square))chess.remove(square);
+   const extraIndex=extras.findIndex(e=>e.square===square);if(extraIndex>=0)extras.splice(extraIndex,1);
+   chess.remove(selectedSquare);chess.put(source,square);
+  }
+  finishMove();broadcastState();return;
+ }
+ if(source&&source.color===chess.turn()){
+  try{
+   const move=chess.move({from:selectedSquare,to:square,promotion:"q"});
+   if(move){finishMove();broadcastState();return}
+  }catch(e){}
+ }
+ if(target||extra){
+  if(target||extra){if(connection&&!sandbox&&(target||extra).color!==myColor){toast("Das ist die Figur deines Gegners.");return}
+   selectedSquare=square;legalTargets=sandbox?[]:chess.moves({square,verbose:true}).map(m=>m.to);renderBoard();return}
+ }
+ selectedSquare=null;legalTargets=[];renderBoard();
+}
+function pushHistory(){history.push({fen:chess.fen(),extras:JSON.parse(JSON.stringify(extras)),sandbox:sandbox});if(history.length>100)history.shift()}
+function finishMove(){selectedSquare=null;legalTargets=[];renderBoard();playMoveSound()}
+function playMoveSound(){try{const ctx=new AudioContext(),o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=520;g.gain.setValueAtTime(.035,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.09);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.1);o.onended=()=>ctx.close()}catch(e){}}
+function updateUI(){
+ const turn=chess.turn(),turnName=turn==="w"?"Weiß":"Schwarz";
+ $("turn-label").textContent=turnName+" ist am Zug";$("turn-sub").textContent=sandbox?"Freie Züge – eigene Regeln":"Wähle eine Figur auf dem Brett";$("turn-emblem").textContent=turn==="w"?"♙":"♟";
+ let status=sandbox?"Chaos-Modus aktiv – Schachregeln aus.":chess.isCheckmate()?"Schachmatt!":chess.isCheck()?"Schach!":chess.isDraw()?"Remis.":"Bereit für deinen nächsten Zug.";
+ if(connection)status+=" · Online verbunden";
+ $("game-status").textContent=status;$("status-light").style.background=chess.isCheckmate()?"#fa8b91":"#75e0b5";
+ $("game-meta").textContent=(sandbox?"CHAOS-MODUS":"STANDARD")+" · 3D VIEW";$("chaos-badge").classList.toggle("hidden",!sandbox);$("sandbox-toggle").checked=sandbox;$("sandbox-modal-toggle").checked=sandbox;
+ $("move-count").textContent=chess.history().length+" ZÜGE";
+ $("move-list").innerHTML="";
+ const moves=chess.history();if(!moves.length){$("move-list").innerHTML='<div class="empty-moves">Noch keine Züge. Das erste Kapitel wartet.</div>'}
+ for(let i=0;i<moves.length;i+=2){const row=document.createElement("div");row.className="move-row";const n=document.createElement("span"),w=document.createElement("span"),b=document.createElement("span");n.className="move-number";n.textContent=(i/2+1)+ ".";w.textContent=moves[i];b.textContent=moves[i+1]||"—";row.append(n,w,b);$("move-list").appendChild(row)}
+ $("white-caption").textContent=connection?(myColor==="w"?"DU · WEISS":"GEGNER · WEISS"):"LOKALES SPIEL";$("black-caption").textContent=connection?(myColor==="b"?"DU · SCHWARZ":"GEGNER · SCHWARZ"):"LOKALES SPIEL";
+ $("black-name").textContent=connection&&myColor==="w"?"Gast · Schwarz":"Schwarz";$("white-name").textContent=connection&&myColor==="b"?"Gast · Weiß":"Weiß · Du";
+}
+function undoMove(){
+ if(!history.length){toast("Noch kein Zug zum Zurücknehmen.");return}
+ if(connection&&!isHost){toast("Im Online-Spiel kann nur der Host zurücksetzen.");return}
+ const snap=history.pop();chess.load(snap.fen);extras=snap.extras||[];sandbox=snap.sandbox;selectedSquare=null;legalTargets=[];renderBoard();broadcastState();toast("Letzte Aktion zurückgenommen.");
+}
+function newGame(){
+ if(connection&&!isHost){toast("Nur der Host kann ein neues Spiel starten.");return}
+ chess.reset();extras=[];history=[];selectedSquare=null;legalTargets=[];sandbox=false;renderBoard();broadcastState();toast("Neues Spiel gestartet.");
+}
+function setSandbox(value){sandbox=value;selectedSquare=null;legalTargets=[];renderBoard();broadcastState();toast(value?"Chaos-Modus ist sichtbar aktiviert.":"Standard-Schachregeln aktiviert.")}
+function addExtraPiece(type,color,square){
+ if(chess.get(square)||extras.some(e=>e.square===square)){toast("Auf diesem Feld steht bereits eine Figur.");return}
+ pushHistory();chess.put({type:type.toLowerCase(),color},square);finishMove();broadcastState();toast(pieceNames[type.toLowerCase()]+" auf "+square+" platziert.");
+}
+function updateCollection(){
+ const root=$("custom-collection");root.innerHTML="";
+ const entries=Object.entries(customDefinitions);
+ if(!entries.length){root.innerHTML='<span style="font-size:9px;color:var(--muted)">Noch keine eigenen Figuren.</span>';return}
+ entries.forEach(([key,def])=>{const tag=document.createElement("div");tag.className="piece-tag";const img=document.createElement("img");img.src=def.dataUrl;img.style.cssText="width:19px;height:19px;object-fit:contain;border-radius:4px";const label=document.createElement("span");label.textContent=(def.name||"Custom")+" · "+(key[0]==="w"?"W":"S")+" "+pieceNames[key[1].toLowerCase()];const del=document.createElement("button");del.textContent="×";del.title="Design entfernen";del.onclick=()=>{delete customDefinitions[key];delete customAssets[key];renderBoard();updateCollection();broadcastState()};tag.append(img,label,del);root.appendChild(tag)});
+}
+function readImageAsDataUrl(file){
+ return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})
+}
+function imageToSilhouette(img){
+ const maxW=120,maxH=150,ratio=Math.min(maxW/img.width,maxH/img.height),w=Math.max(8,Math.round(img.width*ratio)),h=Math.max(8,Math.round(img.height*ratio));
+ const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;const ctx=canvas.getContext("2d",{willReadFrequently:true});ctx.clearRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
+ const frame=ctx.getImageData(0,0,w,h),data=frame.data;
+ const samples=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]].map(([x,y])=>{const i=(y*w+x)*4;return [data[i],data[i+1],data[i+2],data[i+3]]});
+ const transparent=samples.reduce((a,s)=>a+s[3],0)/4<235;
+ const bg=[0,1,2].map(i=>samples.reduce((a,s)=>a+s[i],0)/4);
+ const mask=new Uint8Array(w*h);
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4,alpha=data[i+3];const d=Math.sqrt((data[i]-bg[0])**2+(data[i+1]-bg[1])**2+(data[i+2]-bg[2])**2);mask[y*w+x]=alpha>25&&(transparent||d>48)?1:0}
+ let count=mask.reduce((a,v)=>a+v,0);if(count<w*h*.025){for(let i=0;i<mask.length;i++)mask[i]=data[i*4+3]>25?1:0}
+ const edges=new Map();
+ function addEdge(x1,y1,x2,y2){const a=x1+","+y1,b=[x2,y2];if(!edges.has(a))edges.set(a,[]);edges.get(a).push(b)}
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(mask[y*w+x]){
+  if(y===0||!mask[(y-1)*w+x])addEdge(x,y,x+1,y);
+  if(x===w-1||!mask[y*w+x+1])addEdge(x+1,y,x+1,y+1);
+  if(y===h-1||!mask[(y+1)*w+x])addEdge(x+1,y+1,x,y+1);
+  if(x===0||!mask[y*w+x-1])addEdge(x,y+1,x,y);
+ }
+ let best=null,bestArea=0,guard=0;
+ while(edges.size&&guard++<20000){
+  const first=edges.keys().next().value,parts=first.split(",").map(Number),loop=[[parts[0],parts[1]]];let current=first,closed=false,steps=0;
+  while(steps++<30000){const list=edges.get(current);if(!list||!list.length)break;const next=list.pop();if(!list.length)edges.delete(current);loop.push(next);current=next[0]+","+next[1];if(current===first){closed=true;break}}
+  if(closed&&loop.length>4){let area=0;for(let i=0;i<loop.length-1;i++)area+=loop[i][0]*loop[i+1][1]-loop[i+1][0]*loop[i][1];area=Math.abs(area/2);if(area>bestArea){bestArea=area;best=loop}}
+ }
+ if(!best||best.length<5){
+  const shape=new THREE.Shape();shape.moveTo(-.3,0);shape.lineTo(.3,0);shape.lineTo(.3,.85);shape.lineTo(-.3,.85);shape.closePath();return {geometry:new THREE.ExtrudeGeometry(shape,{depth:.14,bevelEnabled:true,bevelThickness:.025,bevelSize:.018,bevelSegments:2}),texture:new THREE.CanvasTexture(canvas)}
+ }
+ const points=best.slice(0,-1).map(([x,y])=>new THREE.Vector2((x/w-.5)*.82,(1-y/h)*.98));
+ const shape=new THREE.Shape(points);const geometry=new THREE.ExtrudeGeometry(shape,{depth:.14,bevelEnabled:true,bevelThickness:.025,bevelSize:.018,bevelSegments:2,curveSegments:2});
+ geometry.computeBoundingBox();const box=geometry.boundingBox;geometry.translate(-(box.max.x+box.min.x)/2,-box.min.y,-.07);
+ const clean=document.createElement("canvas");clean.width=w;clean.height=h;const cctx=clean.getContext("2d");const cleanData=cctx.createImageData(w,h);
+ for(let i=0;i<mask.length;i++){cleanData.data[i*4]=data[i*4];cleanData.data[i*4+1]=data[i*4+1];cleanData.data[i*4+2]=data[i*4+2];cleanData.data[i*4+3]=mask[i]?data[i*4+3]:0}
+ cctx.putImageData(cleanData,0,0);
+ const texture=new THREE.CanvasTexture(clean);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
+ return {geometry,texture};
+}
+async function buildCustomAsset(key,definition){
+ try{
+  const img=new Image();img.crossOrigin="anonymous";
+  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=definition.dataUrl});
+  const result=imageToSilhouette(img);
+  const material=new THREE.MeshStandardMaterial({map:result.texture,color:0xffffff,roughness:.5,metalness:.12,transparent:true,alphaTest:.04,side:THREE.DoubleSide});
+  customAssets[key]={geometry:result.geometry,material};
+  renderBoard();
+ }catch(error){console.error("Custom 3D figure error",error);toast("Das Bild konnte nicht in 3D umgewandelt werden.")}
+}
+async function createPiece(){
+ const file=$("piece-file").files[0];if(!file){toast("Bitte zuerst ein Bild auswählen.");return}
+ const type=$("piece-type").value,color=$("piece-side").value,key=color+type;
+ const name=$("piece-name").value.trim()||"Meine "+pieceNames[type.toLowerCase()];
+ const reader=await readImageAsDataUrl(file);
+ const img=new Image();img.src=reader;await new Promise((res,rej)=>{img.onload=res;img.onerror=rej});
+ const canvas=document.createElement("canvas"),scale=Math.min(1,512/Math.max(img.width,img.height));canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+ const dataUrl=canvas.toDataURL("image/png");
+ customDefinitions[key]={name:name,dataUrl:dataUrl};
+ await buildCustomAsset(key,customDefinitions[key]);updateCollection();broadcastState();$("piece-file").value="";$("upload-preview").style.display="none";selectedUploadData=null;toast("Deine 3D-Figur ist bereit!");
+}
+function serialiseState(){return {type:"state",fen:chess.fen(),extras:extras,sandbox:sandbox,customDefinitions:customDefinitions,hostColor:"w"}}
+function broadcastState(){if(connection&&connection.open){try{connection.send(serialiseState())}catch(e){console.warn("Sync failed",e)}}}
+function applyNetworkState(data){
+ try{chess.load(data.fen);extras=data.extras||[];sandbox=!!data.sandbox;customDefinitions=data.customDefinitions||{};customAssets={};Object.entries(customDefinitions).forEach(([k,v])=>buildCustomAsset(k,v));history=[];selectedSquare=null;legalTargets=[];updateCollection();renderBoard()}catch(e){console.warn("Invalid incoming state",e)}
+}
+function bindConnection(conn,hostSide){
+ connection=conn;
+ conn.on("open",()=>{ $("connection-status").innerHTML="<strong>Verbunden.</strong> "+(hostSide?"Du bist Weiß.":"Du bist Schwarz.");toast("Multiplayer verbunden.");if(hostSide)broadcastState();else conn.send({type:"hello"})});
+ conn.on("data",data=>{if(data&&data.type==="state")applyNetworkState(data);else if(data&&data.type==="hello"&&hostSide)broadcastState()});
+ conn.on("close",()=>{$("connection-status").textContent="Verbindung getrennt.";connection=null;updateUI()});
+ conn.on("error",err=>{$("connection-status").textContent="Verbindungsfehler: "+err.message});
+ updateUI();
+}
+function createRoom(){
+ if(peer){try{peer.destroy()}catch(e){}peer=null;connection=null}
+ $("room-created").classList.remove("hidden");$("room-status").textContent="Verbinde mit dem Signalisierungsserver …";$("room-code").textContent="Wird erstellt …";
+ try{
+  peer=new Peer();
+  peer.on("open",id=>{$("room-code").textContent=id;$("room-status").textContent="Raum bereit. Teile diese ID mit deinem Freund.";myColor="w";isHost=true});
+  peer.on("connection",conn=>{if(connection&&connection.open)connection.close();myColor="w";bindConnection(conn,true)});
+  peer.on("error",err=>{$("room-status").textContent="Fehler: "+err.message});
+ }catch(e){$("room-status").textContent="Multiplayer konnte nicht gestartet werden: "+e.message}
+}
+function joinRoom(){
+ const room=$("join-code").value.trim();if(!room){toast("Bitte eine Raum-ID eingeben.");return}
+ if(peer){try{peer.destroy()}catch(e){}peer=null;connection=null}
+ try{
+  peer=new Peer();peer.on("open",()=>{const conn=peer.connect(room,{reliable:true});myColor="b";isHost=false;bindConnection(conn,false);$("connection-status").textContent="Verbindung wird aufgebaut …"});
+  peer.on("error",err=>{$("connection-status").textContent="Fehler: "+err.message});
+ }catch(e){$("connection-status").textContent="Multiplayer konnte nicht gestartet werden: "+e.message}
+}
+function disconnectPeer(){if(connection){connection.close();connection=null}if(peer){peer.destroy();peer=null}isHost=false;updateUI()}
+function initSquareSelect(){const s=$("add-square");for(let rank=8;rank>=1;rank--)for(let file=0;file<8;file++){const sq=String.fromCharCode(97+file)+rank;const opt=document.createElement("option");opt.value=sq;opt.textContent=sq;s.appendChild(opt)}}
+function bindUI(){
+ $("new-game").onclick=newGame;$("undo").onclick=undoMove;
+ $("flip-board").onclick=()=>{flipped=!flipped;if(camera){camera.position.x*=-1;camera.position.z*=-1;controls.update()}renderBoard()};
+ $("view-reset").onclick=()=>{if(controls){camera.position.set(7.7,9.7,9.5);controls.target.set(0,.05,0);controls.update()}};
+ $("copy-fen").onclick=()=>{navigator.clipboard?.writeText(chess.fen()).then(()=>toast("FEN kopiert.")).catch(()=>toast("Kopieren nicht möglich."))};
+ $("sandbox-toggle").onchange=e=>setSandbox(e.target.checked);$("sandbox-modal-toggle").onchange=e=>setSandbox(e.target.checked);
+ $("add-piece").onclick=()=>openModal("freestyle-modal");$("confirm-add").onclick=()=>addExtraPiece($("add-type").value,$("add-color").value,$("add-square").value);
+ $("open-studio").onclick=()=>openModal("studio-modal");$("customize-top").onclick=()=>openModal("studio-modal");$("multiplayer-top").onclick=()=>openModal("multi-modal");
+ $("create-piece").onclick=createPiece;$("piece-file").onchange=async e=>{const f=e.target.files[0];if(f){const d=await readImageAsDataUrl(f);$("upload-preview").src=d;$("upload-preview").style.display="block"}};
+ $("create-room").onclick=createRoom;$("join-room").onclick=joinRoom;
+ $("copy-room").onclick=()=>{const t=$("room-code").textContent;if(t&&t!=="Wird erstellt …")navigator.clipboard?.writeText(t).then(()=>toast("Raum-ID kopiert."))};
+ $("sandbox-modal-toggle").onchange=e=>setSandbox(e.target.checked);
+ document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-action]").forEach(x=>x.classList.remove("active"));b.classList.add("active");const action=b.dataset.action;if(action==="customize")openModal("studio-modal");if(action==="multiplayer")openModal("multi-modal");if(action==="freestyle")openModal("freestyle-modal")});
+ $("join-code").addEventListener("keydown",e=>{if(e.key==="Enter")joinRoom()});
+}
+initSquareSelect();bindUI();init3D();updateCollection();
+window.addEventListener("beforeunload",disconnectPeer);
+</script>
+</body>
+</html>
