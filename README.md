@@ -18,7 +18,7 @@ Einfach `index.html` über einen lokalen Webserver oder GitHub Pages bereitstell
 
 ## GitHub Pages
 
-Der Workflow unter `.github/workflows/pages.yml` veröffentlicht die Website bei jedem Push auf `main`. Im Repository muss GitHub Pages einmalig auf **Build and deployment → GitHub Actions** gestellt werden.
+Der Workflow unter `.github/workflows/pages.yml` veröffentlicht die Website bei jedem Push auf `main`. Im Repository muss GitHub Pages einmalig unter **Settings → Pages → Build and deployment → Source → GitHub Actions** aktiviert werden. Danach veröffentlicht der Workflow neue Commits automatisch.
 
 ## Hinweise
 
