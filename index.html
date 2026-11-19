@@ -344,6 +344,7 @@ function newGame(){
 function setSandbox(value){sandbox=value;selectedSquare=null;legalTargets=[];renderBoard();broadcastState();toast(value?"Chaos-Modus ist sichtbar aktiviert.":"Standard-Schachregeln aktiviert.")}
 function addExtraPiece(type,color,square){
  if(chess.get(square)||extras.some(e=>e.square===square)){toast("Auf diesem Feld steht bereits eine Figur.");return}
+ if(!sandbox){sandbox=true;selectedSquare=null;legalTargets=[]}
  pushHistory();extras.push({type:type.toLowerCase(),color,square,id:"custom-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)});finishMove();broadcastState();toast(pieceNames[type.toLowerCase()]+" auf "+square+" platziert.");
 }
 function persistCustomDefinitions(){try{localStorage.setItem("chessverse.custom.v1",JSON.stringify(customDefinitions))}catch(e){console.warn("Local storage full",e);toast("Figur erstellt, aber lokaler Speicher ist voll.")}}
