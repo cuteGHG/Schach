@@ -23,6 +23,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Check embedded JavaScript syntax
+        run: |
+          sed -n '/<script type="module">/,/<\\/script>/p' index.html | sed '1d;$d' > /tmp/chessverse.mjs
+          node --check /tmp/chessverse.mjs
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
         with:
