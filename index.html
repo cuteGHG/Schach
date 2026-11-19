@@ -209,7 +209,7 @@ function makeCustomGroup(key,color){
  const base=new THREE.Mesh(new THREE.CylinderGeometry(.29,.34,.13,40),mat);base.position.y=.07;base.castShadow=true;group.add(base);
  const ring=new THREE.Mesh(new THREE.TorusGeometry(.27,.018,8,40),accent);ring.rotation.x=Math.PI/2;ring.position.y=.15;group.add(ring);
  const solid=new THREE.Mesh(asset.geometry,asset.material);solid.position.y=.14;solid.castShadow=true;solid.receiveShadow=true;group.add(solid);
- group.userData.baseY=.27;return group;
+ group.userData.baseY=.27;group.userData.sharedGeometry=true;return group;
 }
 function addSquare(x,y,z,file,rank){
  const light=(file+rank)%2===1;
@@ -241,7 +241,7 @@ function init3D(){
 }
 function resizeRenderer(){if(!renderer)return;const w=$("board3d").clientWidth,h=$("board3d").clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
 function squarePosition(square){const f=square.charCodeAt(0)-97,r=Number(square[1])-1;return {x:f-3.5,z:3.5-r}}
-function clearGroup(group){while(group.children.length){const o=group.children.pop();if(o.geometry&&o.geometry!==undefined)o.geometry.dispose?.()}}
+function clearGroup(group){while(group.children.length){const child=group.children.pop();if(!child.userData.sharedGeometry)child.traverse(obj=>{if(obj.geometry)obj.geometry.dispose()})}}
 function renderBoard(){
  if(!piecesGroup)return;
  clearGroup(piecesGroup);
@@ -346,11 +346,12 @@ function addExtraPiece(type,color,square){
  if(chess.get(square)||extras.some(e=>e.square===square)){toast("Auf diesem Feld steht bereits eine Figur.");return}
  pushHistory();extras.push({type:type.toLowerCase(),color,square,id:"custom-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)});finishMove();broadcastState();toast(pieceNames[type.toLowerCase()]+" auf "+square+" platziert.");
 }
+function persistCustomDefinitions(){try{localStorage.setItem("chessverse.custom.v1",JSON.stringify(customDefinitions))}catch(e){console.warn("Local storage full",e);toast("Figur erstellt, aber lokaler Speicher ist voll.")}}
 function updateCollection(){
  const root=$("custom-collection");root.innerHTML="";
  const entries=Object.entries(customDefinitions);
  if(!entries.length){root.innerHTML='<span style="font-size:9px;color:var(--muted)">Noch keine eigenen Figuren.</span>';return}
- entries.forEach(([key,def])=>{const tag=document.createElement("div");tag.className="piece-tag";const img=document.createElement("img");img.src=def.dataUrl;img.style.cssText="width:19px;height:19px;object-fit:contain;border-radius:4px";const label=document.createElement("span");label.textContent=(def.name||"Custom")+" · "+(key[0]==="w"?"W":"S")+" "+pieceNames[key[1].toLowerCase()];const del=document.createElement("button");del.textContent="×";del.title="Design entfernen";del.onclick=()=>{delete customDefinitions[key];delete customAssets[key];renderBoard();updateCollection();broadcastState()};tag.append(img,label,del);root.appendChild(tag)});
+ entries.forEach(([key,def])=>{const tag=document.createElement("div");tag.className="piece-tag";const img=document.createElement("img");img.src=def.dataUrl;img.style.cssText="width:19px;height:19px;object-fit:contain;border-radius:4px";const label=document.createElement("span");label.textContent=(def.name||"Custom")+" · "+(key[0]==="w"?"W":"S")+" "+pieceNames[key[1].toLowerCase()];const del=document.createElement("button");del.textContent="×";del.title="Design entfernen";del.onclick=()=>{delete customDefinitions[key];const old=customAssets[key];if(old){old.geometry.dispose();old.material.map?.dispose();old.material.dispose();delete customAssets[key]}persistCustomDefinitions();renderBoard();updateCollection();broadcastState()};tag.append(img,label,del);root.appendChild(tag)});
 }
 function readImageAsDataUrl(file){
  return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})
@@ -397,7 +398,7 @@ async function buildCustomAsset(key,definition){
   await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=definition.dataUrl});
   const result=imageToSilhouette(img);
   const material=new THREE.MeshStandardMaterial({map:result.texture,color:0xffffff,roughness:.5,metalness:.12,transparent:true,alphaTest:.04,side:THREE.DoubleSide});
-  customAssets[key]={geometry:result.geometry,material};
+  const old=customAssets[key];if(old){old.geometry.dispose();old.material.map?.dispose();old.material.dispose()}customAssets[key]={geometry:result.geometry,material};
   renderBoard();
  }catch(error){console.error("Custom 3D figure error",error);toast("Das Bild konnte nicht in 3D umgewandelt werden.")}
 }
@@ -409,13 +410,13 @@ async function createPiece(){
  const img=new Image();img.src=reader;await new Promise((res,rej)=>{img.onload=res;img.onerror=rej});
  const canvas=document.createElement("canvas"),scale=Math.min(1,512/Math.max(img.width,img.height));canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
  const dataUrl=canvas.toDataURL("image/png");
- customDefinitions[key]={name:name,dataUrl:dataUrl};
+ customDefinitions[key]={name:name,dataUrl:dataUrl};persistCustomDefinitions();
  await buildCustomAsset(key,customDefinitions[key]);updateCollection();broadcastState();$("piece-file").value="";$("upload-preview").style.display="none";selectedUploadData=null;toast("Deine 3D-Figur ist bereit!");
 }
-function serialiseState(){return {type:"state",fen:chess.fen(),extras:extras,sandbox:sandbox,customDefinitions:customDefinitions,hostColor:"w"}}
+function serialiseState(){return {type:"state",fen:chess.fen(),pgn:chess.pgn(),extras:extras,sandbox:sandbox,customDefinitions:customDefinitions,hostColor:"w"}}
 function broadcastState(){if(connection&&connection.open){try{connection.send(serialiseState())}catch(e){console.warn("Sync failed",e)}}}
 function applyNetworkState(data){
- try{chess.load(data.fen);extras=data.extras||[];sandbox=!!data.sandbox;customDefinitions=data.customDefinitions||{};customAssets={};Object.entries(customDefinitions).forEach(([k,v])=>buildCustomAsset(k,v));history=[];selectedSquare=null;legalTargets=[];updateCollection();renderBoard()}catch(e){console.warn("Invalid incoming state",e)}
+ try{if(data.fen!==chess.fen())pushHistory();if(!data.sandbox&&data.pgn){chess.reset();chess.loadPgn(data.pgn)}else{chess.load(data.fen)}extras=data.extras||[];sandbox=!!data.sandbox;customDefinitions=data.customDefinitions||{};persistCustomDefinitions();customAssets={};Object.entries(customDefinitions).forEach(([k,v])=>buildCustomAsset(k,v));selectedSquare=null;legalTargets=[];updateCollection();renderBoard()}catch(e){console.warn("Invalid incoming state",e)}
 }
 function bindConnection(conn,hostSide){
  connection=conn;
@@ -448,7 +449,7 @@ function initSquareSelect(){const s=$("add-square");for(let rank=8;rank>=1;rank-
 function bindUI(){
  $("new-game").onclick=newGame;$("undo").onclick=undoMove;
  $("flip-board").onclick=()=>{flipped=!flipped;if(camera){camera.position.x*=-1;camera.position.z*=-1;controls.update()}renderBoard()};
- $("view-reset").onclick=()=>{if(controls){camera.position.set(7.7,9.7,9.5);controls.target.set(0,.05,0);controls.update()}};
+ $("view-reset").onclick=()=>{flipped=false;if(controls){camera.position.set(7.7,9.7,9.5);controls.target.set(0,.05,0);controls.update()}renderBoard()};$("view-3d").onclick=()=>{flipped=false;if(controls){camera.position.set(7.7,9.7,9.5);controls.target.set(0,.05,0);controls.update()}renderBoard()};
  $("copy-fen").onclick=()=>{navigator.clipboard?.writeText(chess.fen()).then(()=>toast("FEN kopiert.")).catch(()=>toast("Kopieren nicht möglich."))};
  $("sandbox-toggle").onchange=e=>setSandbox(e.target.checked);$("sandbox-modal-toggle").onchange=e=>setSandbox(e.target.checked);
  $("add-piece").onclick=()=>openModal("freestyle-modal");$("confirm-add").onclick=()=>addExtraPiece($("add-type").value,$("add-color").value,$("add-square").value);
@@ -460,7 +461,8 @@ function bindUI(){
  document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-action]").forEach(x=>x.classList.remove("active"));b.classList.add("active");const action=b.dataset.action;if(action==="customize")openModal("studio-modal");if(action==="multiplayer")openModal("multi-modal");if(action==="freestyle")openModal("freestyle-modal")});
  $("join-code").addEventListener("keydown",e=>{if(e.key==="Enter")joinRoom()});
 }
-initSquareSelect();bindUI();init3D();updateCollection();
+try{customDefinitions=JSON.parse(localStorage.getItem("chessverse.custom.v1")||"{}")}catch(e){customDefinitions={}}
+initSquareSelect();bindUI();init3D();updateCollection();Object.entries(customDefinitions).forEach(([k,v])=>buildCustomAsset(k,v));
 window.addEventListener("beforeunload",disconnectPeer);
 </script>
 </body>
