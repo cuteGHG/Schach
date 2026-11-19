@@ -49,7 +49,7 @@ main{padding:27px clamp(18px,3vw,44px) 40px;max-width:1600px;width:100%;margin:0
       <div class="board-stage" id="board-stage">
         <div id="board3d"></div>
         <div class="board-view"><button class="active" id="view-3d">3D</button><button id="view-reset">⟳ Ansicht</button></div>
-        <div class="board-hint">ZIEHEN ZUM DREHEN · KLICKEN ZUM ZIEHEN DER FIGUREN</div>
+        <div class="board-hint">ZIEHEN ZUM DREHEN · FIGUR AUSWÄHLEN · ZIELFELD KLICKEN</div>
       </div>
       <div class="board-bottom">
         <div class="player-chip"><div class="player-piece black">♚</div><div><div class="player-name" id="black-name">Schwarz</div><div class="player-caption" id="black-caption">AM ZUG, WENN ANGEZEIGT</div></div></div>
@@ -212,7 +212,7 @@ function makeCustomGroup(key,color){
  group.userData.baseY=.27;return group;
 }
 function addSquare(x,y,z,file,rank){
- const light=(file+rank)%2===0;
+ const light=(file+rank)%2===1;
  const mat=new THREE.MeshStandardMaterial({color:light?0xc7c9bd:0x526a72,roughness:.62,metalness:.05});
  const mesh=new THREE.Mesh(new THREE.BoxGeometry(.99,.1,.99),mat);
  mesh.position.set(x,.19,z);mesh.receiveShadow=true;mesh.userData.square=String.fromCharCode(97+file)+(rank+1);
@@ -268,14 +268,13 @@ function markSelected(square){
 }
 function markLegal(square){
  const p=squarePosition(square);const occupied=chess.get(square)||extras.some(e=>e.square===square);
- const mark=new THREE.Mesh(occupied?new THREE.RingGeometry(.39,.44,40):new THREE.CircleGeometry(.12,24),new THREE.MeshBasicMaterial({color:0x9af1ca,transparent:true,opacity:occupied?.76:.78,side:THREE.DoubleSide}));mark.rotation.x=-Math.PI/2;mark.position.set(p.x,.262,p.z);piecesGroup.add(mark);
+ const mark=new THREE.Mesh(occupied?new THREE.RingGeometry(.39,.44,40):new THREE.CircleGeometry(.12,24),new THREE.MeshBasicMaterial({color:0x9af1ca,transparent:true,opacity:occupied ? .76 : .78,side:THREE.DoubleSide}));mark.rotation.x=-Math.PI/2;mark.position.set(p.x,.262,p.z);piecesGroup.add(mark);
 }
 function onBoardPointer(event){
  if(!renderer||!renderer.domElement)return;
  const rect=renderer.domElement.getBoundingClientRect();pointer.x=((event.clientX-rect.left)/rect.width)*2-1;pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);
- const hits=raycaster.intersectObjects([...piecesGroup.children,...boardSquares],true);if(!hits.length)return;
- let obj=hits[0].object;while(obj&&!obj.userData.square)obj=obj.parent;
- if(obj&&obj.userData.square){handleSquare(obj.userData.square)}
+ const hits=raycaster.intersectObjects([...piecesGroup.children,...boardSquares],true);
+ for(const hit of hits){let obj=hit.object;while(obj&&!obj.userData.square)obj=obj.parent;if(obj&&obj.userData.square){handleSquare(obj.userData.square);return}}
 }
 function handleSquare(square){
  if(connection&&!sandbox&&((myColor==="w"&&chess.turn()==="b")||(myColor==="b"&&chess.turn()==="w"))){toast("Warte auf deinen Zug.");return}
@@ -303,8 +302,9 @@ function handleSquare(square){
   }
   finishMove();broadcastState();return;
  }
- if(source&&source.color===chess.turn()){
+ if(source&&source.color===chess.turn()&&legalTargets.includes(square)){
   try{
+   pushHistory();
    const move=chess.move({from:selectedSquare,to:square,promotion:"q"});
    if(move){finishMove();broadcastState();return}
   }catch(e){}
@@ -315,7 +315,7 @@ function handleSquare(square){
  }
  selectedSquare=null;legalTargets=[];renderBoard();
 }
-function pushHistory(){history.push({fen:chess.fen(),extras:JSON.parse(JSON.stringify(extras)),sandbox:sandbox});if(history.length>100)history.shift()}
+function pushHistory(){history.push({fen:chess.fen(),pgn:chess.pgn(),extras:JSON.parse(JSON.stringify(extras)),sandbox:sandbox});if(history.length>100)history.shift()}
 function finishMove(){selectedSquare=null;legalTargets=[];renderBoard();playMoveSound()}
 function playMoveSound(){try{const ctx=new AudioContext(),o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=520;g.gain.setValueAtTime(.035,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.09);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.1);o.onended=()=>ctx.close()}catch(e){}}
 function updateUI(){
@@ -335,7 +335,7 @@ function updateUI(){
 function undoMove(){
  if(!history.length){toast("Noch kein Zug zum Zurücknehmen.");return}
  if(connection&&!isHost){toast("Im Online-Spiel kann nur der Host zurücksetzen.");return}
- const snap=history.pop();chess.load(snap.fen);extras=snap.extras||[];sandbox=snap.sandbox;selectedSquare=null;legalTargets=[];renderBoard();broadcastState();toast("Letzte Aktion zurückgenommen.");
+ const snap=history.pop();if(!snap.sandbox&&snap.pgn){chess.reset();chess.loadPgn(snap.pgn)}else{chess.load(snap.fen)}extras=snap.extras||[];sandbox=snap.sandbox;selectedSquare=null;legalTargets=[];renderBoard();broadcastState();toast("Letzte Aktion zurückgenommen.");
 }
 function newGame(){
  if(connection&&!isHost){toast("Nur der Host kann ein neues Spiel starten.");return}
@@ -344,7 +344,7 @@ function newGame(){
 function setSandbox(value){sandbox=value;selectedSquare=null;legalTargets=[];renderBoard();broadcastState();toast(value?"Chaos-Modus ist sichtbar aktiviert.":"Standard-Schachregeln aktiviert.")}
 function addExtraPiece(type,color,square){
  if(chess.get(square)||extras.some(e=>e.square===square)){toast("Auf diesem Feld steht bereits eine Figur.");return}
- pushHistory();chess.put({type:type.toLowerCase(),color},square);finishMove();broadcastState();toast(pieceNames[type.toLowerCase()]+" auf "+square+" platziert.");
+ pushHistory();extras.push({type:type.toLowerCase(),color,square,id:"custom-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)});finishMove();broadcastState();toast(pieceNames[type.toLowerCase()]+" auf "+square+" platziert.");
 }
 function updateCollection(){
  const root=$("custom-collection");root.innerHTML="";
